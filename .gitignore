@@ -1,2 +1,4 @@
 *.sqlite
 *~
+*.mp3
+.idea
