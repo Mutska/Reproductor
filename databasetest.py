@@ -62,6 +62,15 @@ print(lista[9].get_tags())
 data = database("hello",lista,paths)
 data.create_database()
 data.fill_database()
+db = sqlite3.connect("Reproductor.sqlite")
+cursor = db.cursor()
+cursor.execute("select * from rolas")
+for record in cursor:
+   print(record[4])
+   #print(genre)
+   print("-"*20)
+cursor.close()
+db.close()
 
 #db.execute("insert into albums values(2,'Unknown','espora',1008)")
 
@@ -69,7 +78,7 @@ data.fill_database()
 cursor = db.cursor()
 cursor.execute("select * from types")
 
-for id_type,description in cursor:
+for title,description in cursor:
    print(id_type)
    print(description)
    print("-"*20)
