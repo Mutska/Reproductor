@@ -119,15 +119,34 @@ class TreeViewFilterWindow(Gtk.Window):
     """
     def on_entry_enter(self, widget):
         self.current_filter_search = widget.get_text()
+        param = "%"
+        param += self.current_filter_search
+        param += "%"
+        param_search = ( param, param,param )
+        found = []
+        db = sqlite3.connect("Reproductor.sqlite")
+        cursor = db.cursor()
+        cursor.execute(
+            "select rolas.title,performers.name,albums.name from rolas,performers,albums where (rolas.id_performer = performers.id_performer and rolas.id_album = albums.id_album and (rolas.title like ? or performers.name like ? or albums.name like ?))",
+            param_search)
+        for record in cursor:
+            found.append(record[0])
+        self.current_filter_search = found[0]
+        cursor.close()
+        db.close()
         print("Busqueda : %s" % self.current_filter_search)
         #Actualizamos "filter" para que actualize la vista
         self.search_filter.refilter()
+        self.current_filter_search = found[1]
+        self.search_filter.refilter()
+        #self.search_filter.set_visible_column(2)
     def on_enter(self,widget):
         text = widget.get_text()
         print(text)
         return text
 
-#select rolas.title,performers.name,albums.name from rolas,performers,albums where (rolas.id_performer = performers.id_performer and rolas.id_album = albums.id_album and (rolas.title like "%spls%" or performers.name like "%mms%" or albums.name like "%cup%"))
+
+
 win = TreeViewFilterWindow()
 #print(dir(win.props))
 win.connect("destroy", Gtk.main_quit)
