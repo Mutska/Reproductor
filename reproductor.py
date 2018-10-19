@@ -28,10 +28,9 @@ def get_path(rel_path):
     abs_path_to_resource = os.path.abspath(rel_path_to_resource)
     return abs_path_to_resource
 
-class salvation(object):
-    def __init__(self,list):
-        self.lista = []
-        self.lista = list
+
+
+
 
 
 class TreeViewFilterWindow(Gtk.Window):
@@ -62,6 +61,7 @@ class TreeViewFilterWindow(Gtk.Window):
 
         #Creacion del  treeview, usando el  filter como  model.
         self.treeview = Gtk.TreeView.new_with_model(self.search_filter)
+        self.treeview.connect("row-activated",self.on_db_click)
         for i, column_title in enumerate(["Title", "Artist", "Album","Genre"]):
             renderer = Gtk.CellRendererText()
             column = Gtk.TreeViewColumn(column_title, renderer, text=i)
@@ -78,6 +78,7 @@ class TreeViewFilterWindow(Gtk.Window):
                 self.img1 = Gtk.Image()
                 self.img1.set_from_icon_name("media-playback-start", 1)
                 button.set_image(self.img1)
+                #button.connect("clicked",self._btn_cb)
             if i == 1:
                 self.img1 = Gtk.Image()
                 self.img1.set_from_icon_name("emblem-system", 1)
@@ -109,9 +110,17 @@ class TreeViewFilterWindow(Gtk.Window):
 
         self.show_all()
 
+    def on_db_click(self, tree_view,path,column):
+            model = tree_view.get_model()
+            iter = model.get_iter(path)
+            print(model[iter][0])
+
+
+    def on_row_click(self,widget):
+        print("Clickeando por diversion")
+
     def search_filter_func(self, model, iter, data):
         bools = []
-        set = {}
         if self.current_filter_search is None or self.current_filter_search == "None":
             return True
         else:
@@ -133,9 +142,10 @@ class TreeViewFilterWindow(Gtk.Window):
         self.search_filter.refilter()
     """
     def on_entry_enter(self, widget):
-        self.current_filter_search = widget.get_text()
+        self.current_filter_search = []
+        temp = widget.get_text()
         param = "%"
-        param += self.current_filter_search
+        param += temp
         param += "%"
         param_search = ( param, param,param )
         found = []
@@ -149,15 +159,12 @@ class TreeViewFilterWindow(Gtk.Window):
         self.current_filter_search = found
         cursor.close()
         db.close()
-        #print("Busqueda : %s" % self.current_filter_search)
-        #x = salvation(found)
+        print("Busqueda de patrón : %s" % temp)
         # setting the filter function, note that we're not using the
         self.search_filter.set_visible_func(self.search_filter_func)
-        #self.search_filter.refilter()
-        #self.current_filter_search = found[1]
         # Actualizamos "filter" para que actualize la vista
         self.search_filter.refilter()
-        #   self.search_filter.set_visible_column(2)
+
     def on_enter(self,widget):
         text = widget.get_text()
         print(text)
