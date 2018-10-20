@@ -29,8 +29,107 @@ def get_path(rel_path):
     return abs_path_to_resource
 
 
+class DialogExample(Gtk.Dialog):
+
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, "Edit Persons", parent, 0,
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                             Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        hbox = Gtk.HBox()
+        hbox2 = Gtk.HBox()
+        hbox3 = Gtk.HBox()
+        hbox4 = Gtk.HBox()
+        self.set_default_size(300, 200)
+        entry = Gtk.Entry()
+        entry2 = Gtk.Entry()
+        entry3 = Gtk.Entry()
+        entry4 = Gtk.Entry()
+        label = Gtk.Label("Stage name: ")
+        label2 = Gtk.Label("Real name:   ")
+        label3 = Gtk.Label("Date of birth: ")
+        label4 = Gtk.Label("Date of death:   ")
+        hbox.pack_start(label, False, 2, 0)
+        hbox.pack_end(entry, True, True, 0)
+        hbox2.pack_start(label2, False, 2, 0)
+        hbox2.pack_end(entry2, True, True, 0)
+        hbox3.pack_start(label3, False, 2, 0)
+        hbox3.pack_end(entry3, True, True, 0)
+        hbox4.pack_start(label4, False, 2, 0)
+        hbox4.pack_end(entry4, True, True, 0)
+        box = self.get_content_area()
+        box.set_spacing(5)
+        box.add(hbox)
+        box.add(hbox2)
+        box.add(hbox3)
+        box.add(hbox4)
+        self.show_all()
 
 
+class DialogExample2(Gtk.Dialog):
+
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, "Edit Group", parent, 0,
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                             Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        hbox = Gtk.HBox()
+        hbox2 = Gtk.HBox()
+        hbox3 = Gtk.HBox()
+        self.set_default_size(300, 200)
+        entry = Gtk.Entry()
+        entry2 = Gtk.Entry()
+        entry3 = Gtk.Entry()
+        label = Gtk.Label("Name: ")
+        label2 = Gtk.Label("Start date:   ")
+        label3 = Gtk.Label("End date: ")
+        hbox.pack_start(label, False, 2, 0)
+        hbox.pack_end(entry, True, True, 0)
+        hbox2.pack_start(label2, False, 2, 0)
+        hbox2.pack_end(entry2, True, True, 0)
+        hbox3.pack_start(label3, False, 2, 0)
+        hbox3.pack_end(entry3, True, True, 0)
+        box = self.get_content_area()
+        box.set_spacing(5)
+        box.add(hbox)
+        box.add(hbox2)
+        box.add(hbox3)
+        self.show_all()
+
+
+class DialogWindow(Gtk.Window):
+
+    def __init__(self):
+        Gtk.Window.__init__(self, title="Editions")
+        self .set_border_width(6)
+        self.box = Gtk.Box(spacing=6)
+        self.add(self.box)
+        self.button1 = Gtk.Button(label="Edit Persons")
+        self.button1.connect("clicked", self.on_button_clicked)
+        self.box.pack_start(self.button1, True, True, 0)
+        self.button2 = Gtk.Button(label="Edit Groups")
+        self.button2.connect("clicked", self.on_button_clicked2)
+        self.box.pack_start(self.button2, True, True, 0)
+
+    def on_button_clicked(self, widget):
+        dialog = DialogExample(self)
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            print("The OK button was clicked")
+        elif response == Gtk.ResponseType.CANCEL:
+            print("The Cancel button was clicked")
+
+        dialog.destroy()
+
+    def on_button_clicked2(self, widget):
+        dialog = DialogExample2(self)
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            print("The OK button was clicked")
+        elif response == Gtk.ResponseType.CANCEL:
+            print("The Cancel button was clicked")
+
+        dialog.destroy()
 
 
 class TreeViewFilterWindow(Gtk.Window):
@@ -114,7 +213,9 @@ class TreeViewFilterWindow(Gtk.Window):
             model = tree_view.get_model()
             iter = model.get_iter(path)
             print(model[iter][0])
-
+            win = DialogWindow()
+            #win.connect("destroy", Gtk.main_quit)
+            win.show_all()
 
     def on_row_click(self,widget):
         print("Clickeando por diversion")
@@ -131,16 +232,6 @@ class TreeViewFilterWindow(Gtk.Window):
                 tempo |= bools[i]
             return tempo
 
-            #return model[iter][0] == self.current_filter_search[0] or model[iter][0] == self.current_filter_search[1] or model[iter][0] == self.current_filter_search[2]
-            #return model[iter][0] in data.lista and model[iter][0] == data.lista
-    """"
-    def on_selection_button_clicked(self, widget):
-        
-        self.current_filter_language = widget.get_label()
-        self.current_filter_search = widget.get_text()
-        print("%s searched" % self.current_filter_search)
-        self.search_filter.refilter()
-    """
     def on_entry_enter(self, widget):
         self.current_filter_search = []
         temp = widget.get_text()
