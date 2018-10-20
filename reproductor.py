@@ -6,20 +6,6 @@ import itertools
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-tup = ()
-lista = []
-db = sqlite3.connect("Reproductor.sqlite")
-cursor = db.cursor()
-
-cursor.execute("select * from rolas,performers,albums where rolas.id_performer = performers.id_performer and rolas.id_album = albums.id_album")
-
-for record in cursor:
-   tup = (record[4],record[9],record[13],record[7])
-   lista.append(tup)
-cursor.close()
-db.close()
-
-
 
 def get_path(rel_path):
     dir_of_py_file = os.path.dirname(__file__)
@@ -399,6 +385,20 @@ class TreeViewFilterWindow(Gtk.Window):
         self.settings = Gtk.Settings.get_default()
         self.settings.props.gtk_button_images = True
 
+        tup = ()
+        lista = []
+        db = sqlite3.connect("Reproductor.sqlite")
+        cursor = db.cursor()
+
+        cursor.execute(
+            "select * from rolas,performers,albums where rolas.id_performer = performers.id_performer and rolas.id_album = albums.id_album")
+
+        for record in cursor:
+            tup = (record[4], record[9], record[13], record[7])
+            lista.append(tup)
+        cursor.close()
+        db.close()
+
         #Creacion del "ListStore model"
         self.fields = Gtk.ListStore(str, str, str,str)
         for titles in lista:
@@ -519,10 +519,3 @@ class TreeViewFilterWindow(Gtk.Window):
     def on_enter(self,widget):
         win = Edit_on_groups_and_persons()
         win.show_all()
-
-
-
-win = TreeViewFilterWindow()
-win.connect("destroy", Gtk.main_quit)
-win.show_all()
-Gtk.main()

@@ -1,6 +1,8 @@
 import os
 from mp3_tagger import MP3File,VERSION_2
+from os.path import expanduser
 
+home = expanduser("~/music")
 
 class miner(object):
 
@@ -31,8 +33,6 @@ class miner(object):
 
 
 
-    #tags = mp3.get_tags()
-    #print(tags)
 
 
 

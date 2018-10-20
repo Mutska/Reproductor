@@ -1,7 +1,10 @@
 import sqlite3
 import itertools
+import gi
 from miner import miner
-
+from reproductor import *
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
 
 class database(object):
     def __init__(self,dir,list,paths):
@@ -31,7 +34,6 @@ class database(object):
         db.close()
     def fill_database(self):
         db = sqlite3.connect("Reproductor.sqlite")
-        print(self.list)
         for file,path in zip(self.list,self.paths):
             if file.track.isdigit():
                 trackS = file.track
@@ -53,42 +55,16 @@ class database(object):
 
 
 minero = miner("ola")
-
 minero.find_mp3_files()
-print(minero.mp3_files_path)
 lista = minero.get_mp3_tags()
 paths = minero.mp3_files_path
-print(lista[9].get_tags())
 data = database("hello",lista,paths)
 data.create_database()
 data.fill_database()
-db = sqlite3.connect("Reproductor.sqlite")
-cursor = db.cursor()
-cursor.execute("select * from rolas")
-for record in cursor:
-   print(record[4])
-   #print(genre)
-   print("-"*20)
-cursor.close()
-db.close()
 
-#db.execute("insert into albums values(2,'Unknown','espora',1008)")
 
-"""
-cursor = db.cursor()
-cursor.execute("select * from types")
+win = TreeViewFilterWindow()
+win.connect("destroy", Gtk.main_quit)
+win.show_all()
+Gtk.main()
 
-for title,description in cursor:
-   print(id_type)
-   print(description)
-   print("-"*20)
-
-cursor.execute("select * from albums")
-
-for id_album,path,text,year in cursor:
-    print(text)
-    print(year)
-    print("-"*20)
-
-cursor.close()
-"""
