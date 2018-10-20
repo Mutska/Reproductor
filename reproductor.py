@@ -69,7 +69,21 @@ class Edit_persons(Gtk.Dialog):
         box.add(hbox3)
         box.add(hbox4)
         box.add(hbox5)
+        button.connect("clicked", self.saving, entry, entry2, entry3,entry4)
         self.show_all()
+
+    def saving(self, widget, entry, entry2, entry3,entry4       ):
+        stage_name = entry.get_text()
+        real_name  = entry2.get_text()
+        date_b = entry3.get_text()
+        date_d = entry4.get_text()
+        tup = (stage_name, real_name, date_b,date_d)
+        db = sqlite3.connect("Reproductor.sqlite")
+        cursor = db.cursor()
+        cursor.execute("insert into persons(stage_name,real_name,birth_date,death_date) values(?,?,?,?)", tup)
+        db.commit()
+        cursor.close()
+        db.close()
 
 
 class Edit_groups(Gtk.Dialog):
@@ -393,6 +407,7 @@ class TreeViewFilterWindow(Gtk.Window):
 
         #Creacion del  filter con el "liststore model"
         self.search_filter = self.fields.filter_new()
+        self.search_filter2 = self.fields.filter_new()
 
 
         #Creacion del  treeview, usando el  filter como  model.
@@ -417,8 +432,9 @@ class TreeViewFilterWindow(Gtk.Window):
                 #button.connect("clicked",self._btn_cb)
             if i == 1:
                 self.img1 = Gtk.Image()
-                self.img1.set_from_icon_name("emblem-system", 1)
+                self.img1.set_from_icon_name("document-revert", 1)
                 button.set_image(self.img1)
+                button.connect("clicked",self.on_click_reformed)
             if i == 2:
                 self.img1 = Gtk.Image()
                 self.img1.set_from_icon_name("avatar-default", 1)
@@ -470,6 +486,8 @@ class TreeViewFilterWindow(Gtk.Window):
             for i in range(len(bools)):
                 tempo |= bools[i]
             return tempo
+    def search_filter_func2(self, model, iter, data):
+        return model[iter][0] != "PALABRASRESBUCADASAS"
 
     def on_entry_enter(self, widget):
         self.current_filter_search = []
@@ -494,6 +512,9 @@ class TreeViewFilterWindow(Gtk.Window):
         self.search_filter.set_visible_func(self.search_filter_func)
         # Actualizamos "filter" para que actualize la vista
         self.search_filter.refilter()
+    def on_click_reformed(self,widget):
+        self.search_filter2.set_visible_func(self.search_filter_func2)
+        self.search_filter2.refilter()
 
     def on_enter(self,widget):
         win = Edit_on_groups_and_persons()
